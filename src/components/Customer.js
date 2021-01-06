@@ -16,20 +16,34 @@ const Customer = () => {
         })
     }
 
+    const deleteCustomer = (id) => {
+        axios.delete(`http://localhost:1234/api/v1/customer/deleteCustomer/${id}`).then(res => {
+            loadAllCustomers();
+        }).catch(err => {
+
+        })
+    }
+
+    const updateCustomer = (id) => {
+        axios.put('http://localhost:1234/api/v1/customer/updateCustomer', { id }).then(res => {
+
+        }).catch(err => {
+
+        })
+    }
+
     const renderBasingInput = (e) => {
         const userInput = e.target.value;
         let list = [];
         if (userInput !== '') {
-            customers.map((item) => {
+            customers.map((customer) => {
                 if (
-                    item.itemName
+                    customer.customerName
                         .toString()
                         .toLowerCase()
                         .startsWith(userInput.toLowerCase())
                 ) {
-                    console.log('here');
-                    list.push(item);
-                    console.log('here 2');
+                    list.push(customer);
                 }
             });
         } else {
@@ -38,10 +52,10 @@ const Customer = () => {
         setRenderList(list);
     }
 
-
-    useEffect(() => {
+    const loadAllCustomers = () => {
         axios.get('http://localhost:1234/api/v1/customer/findAllCustomers').then(({ data }) => {
             if (data.isDone) {
+                setRenderList(data.data);
                 setCustomers(data.data);
             } else {
                 toast("Error please try again", { type: 'error' });
@@ -49,6 +63,10 @@ const Customer = () => {
         }).catch(err => {
             toast("Error please try again", { type: 'error' });
         })
+    }
+
+    useEffect(() => {
+        loadAllCustomers();
     }, [])
 
     console.log(customers);
@@ -93,15 +111,18 @@ const Customer = () => {
                                 <th>Address</th>
                                 <th>Mobile</th>
                                 <th>NIC</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {renderList && renderList.map(customer => {
                                 return <tr>
-                                    <td>customer.customerName</td>
-                                    <td>customer.customer</td>
-                                    <td>$0.87</td>
-                                    <td>$0.87</td>
+                                    <td>{customer.customerName}</td>
+                                    <td>{customer.customerAddress}</td>
+                                    <td>{customer.customerMobile}</td>
+                                    <td>{customer.customerNIC}</td>
+                                    <td><button class="btn-sm btn-danger" onClick={() => { deleteCustomer(customer._id) }}>Delete</button></td>
+                                    <td><button class="btn-sm btn-danger" onClick={() => { updateCustomer(customer._id) }}>Delete</button></td>
                                 </tr>
                             })}
                         </tbody>
