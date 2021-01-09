@@ -7,6 +7,13 @@ import { toast } from 'react-toastify';
 const Customer = () => {
     const [customers, setCustomers] = useState([]);
     const [renderList, setRenderList] = useState([]);
+    const [customerDetail, setCustomerDetail] = useState({
+        customerName: '',
+        customerAddress: '',
+        customerMobile: '',
+        customerNIC: ''
+    });
+
 
     const handleAdminSubmit = (customer) => {
         axios.post('', customer).then(res => {
@@ -24,12 +31,28 @@ const Customer = () => {
         })
     }
 
-    const updateCustomer = (id) => {
-        axios.put('http://localhost:1234/api/v1/customer/updateCustomer', { id }).then(res => {
+    const updateCustomer = (e, id) => {
+        console.log(e, id);
+        const data = Array.prototype.slice.call(e.target.parentElement.parentElement.cells);
+        console.log(data);
+        if (data.length) {
+            const customerName = data[0].innerText;
+            const customerAddress = data[1].innerText;
+            const customerMobile = data[2].innerText;
+            const customerNIC = data[3].innerText;
+            setCustomerDetail({
+                customerName,
+                customerAddress,
+                customerMobile,
+                customerNIC,
+            })
+        }
 
-        }).catch(err => {
+        // axios.put('http://localhost:1234/api/v1/customer/updateCustomer', customer).then(res => {
 
-        })
+        // }).catch(err => {
+
+        // })
     }
 
     const renderBasingInput = (e) => {
@@ -65,11 +88,29 @@ const Customer = () => {
         })
     }
 
+
+    const setToTheFormOnClick = (e) => {
+        console.log('clicked');
+        const data = Array.prototype.slice.call(e.target.parentElement.children);
+        if (data.length) {
+            const customerName = data[0].innerText;
+            const customerAddress = data[1].innerText;
+            const customerMobile = data[2].innerText;
+            const customerNIC = data[3].innerText;
+
+            setCustomerDetail({
+                customerName,
+                customerAddress,
+                customerMobile,
+                customerNIC,
+            })
+        }
+    }
+
     useEffect(() => {
         loadAllCustomers();
     }, [])
 
-    console.log(customers);
     return (
 
         <div className="container">
@@ -78,23 +119,25 @@ const Customer = () => {
                     <Formik
                         initialValues={{ customerName: '', customerAddress: '', customerMobile: '', customerNIC: '' }}
                         onSubmit={(value, action) => {
-                            console.log(action);
+                            console.log('Heyyy', value);
                         }}
+
+
                     >
                         {(props) => (
                             <form>
                                 <h3 className="blue-text">Manage Customer</h3>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" aria-describedby="emailHelp" placeholder="Customer Name" value={props.values.customerName} onChange={props.handleChange('customerName')} onBlur={props.handleBlur('customerName')} />
+                                    <input type="text" className="form-control" aria-describedby="emailHelp" placeholder="Customer Name" value={props.values.customerName} onChange={props.handleChange('customerName')} onBlur={props.handleBlur('customerName')} value={props.values.customerName ? props.values.customerName : customerDetail.customerName} />
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" placeholder="Customer Address" value={props.values.customerAddress} onChange={props.handleChange('customerAddress')} onBlur={props.handleBlur('customerAddress')} />
+                                    <input type="text" className="form-control" placeholder="Customer Address" value={props.values.customerAddress ? props.values.customerAddress : customerDetail.customerAddress} onChange={props.handleChange('customerAddress')} onBlur={props.handleBlur('customerAddress')} />
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" placeholder="Customer NIC" value={props.values.customerNIC} onChange={props.handleChange('customerNIC')} onBlur={props.handleBlur('customerNIC')} />
+                                    <input type="text" className="form-control" placeholder="Customer NIC" value={props.values.customerNIC ? props.values.customerNIC : customerDetail.customerNIC} onChange={props.handleChange('customerNIC')} onBlur={props.handleBlur('customerNIC')} />
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" placeholder="Customer Mobile" value={props.values.customerMobile} onChange={props.handleChange('customerMobile')} onBlur={props.handleBlur('customerMobile')} />
+                                    <input type="text" className="form-control" placeholder="Customer Mobile" value={props.values.customerMobile ? props.values.customerMobile : customerDetail.customerMobile} onChange={props.handleChange('customerMobile')} onBlur={props.handleBlur('customerMobile')} />
                                 </div>
                                 <Link class="waves-effect waves-light btn-small mr-4" onClick={props.handleSubmit}><i class="material-icons left">cloud</i>button</Link>
                                 <Link class="waves-effect waves-light btn-small"><i class="material-icons left">cloud</i>button</Link>
@@ -111,7 +154,8 @@ const Customer = () => {
                                 <th>Address</th>
                                 <th>Mobile</th>
                                 <th>NIC</th>
-                                <th>Action</th>
+                                <th>Delete</th>
+                                <th>Update</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,7 +166,7 @@ const Customer = () => {
                                     <td>{customer.customerMobile}</td>
                                     <td>{customer.customerNIC}</td>
                                     <td><button class="btn-sm btn-danger" onClick={() => { deleteCustomer(customer._id) }}>Delete</button></td>
-                                    <td><button class="btn-sm btn-danger" onClick={() => { updateCustomer(customer._id) }}>Delete</button></td>
+                                    <td><button class="btn-sm btn-danger" onClick={(e) => { updateCustomer(e, customer._id) }}>Delete</button></td>
                                 </tr>
                             })}
                         </tbody>
