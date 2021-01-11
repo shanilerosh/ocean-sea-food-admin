@@ -5,24 +5,22 @@ import { Button } from 'react-bootstrap';
 
 function Order() {
     const [orders, setOrders] = useState([]);
-    const [orderStatus, setOrderStatus] = useState('pending');
 
     useEffect(() => {
-        axios.get('http://localhost:1234/api/v1/order/getAllOrders').then(({ data }) => {
+        axios.get('https://ocean-sea-food-api.herokuapp.com/api/v1/order/getAllOrders').then(({ data }) => {
             console.log(data.data);
             if (data.isDone) {
-                setOrders(data.data);
-                console.log("adadad", orders);
+                setOrders(data.data.reverse());
             } else {
-
             }
         })
     }, []);
 
+    console.log(orders);
     return (
         <div className="container">
             {orders.map(order => {
-                <OrderDetail orderDetail={order} />
+                return <OrderDetail orderDetail={order} />
             })}
         </div>
     );

@@ -9,13 +9,20 @@ import Order from "./components/Order";
 import io from "socket.io-client";
 import { Button } from "react-bootstrap";
 import OrderFilterForm from "./components/OrderFilterForm";
+import { toast } from "react-toastify";
+import Item from "./components/Item";
+import User from "./components/User";
 
-const socket = io("ws://localhost:1234", {
+const socket = io("ws://ocean-sea-food-api.herokuapp.com/", {
   transports: ["websocket", "polling"],
 });
 
 socket.on("broadcast", (data) => {
-  console.log("Called Here", data);
+  console.log(data);
+  toast(
+    `Order has been place by user ${data.user.userName} for the customer ${data.customer.customerName} for a total amount of Rs. ${data.orderTotal}`,
+    { type: "success" }
+  );
 });
 
 const App = () => {
@@ -25,7 +32,7 @@ const App = () => {
     <div>
       <ToastContainer
         position="top-left"
-        autoClose={5000}
+        autoClose={15000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -34,17 +41,23 @@ const App = () => {
         draggable
         pauseOnHover
       />
+      
       <BrowserRouter>
         <Switch>
-          <Route path="/">
+          <Route path="/panel">
             <Header />
             <Order />
           </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/panel">
+          <Route path="/item">
             <Header />
+            <Item />
+          </Route>
+          <Route path="/user">
+            <Header />
+            <User />
+          </Route>
+          <Route path="/">
+            <Login />
           </Route>
         </Switch>
       </BrowserRouter>

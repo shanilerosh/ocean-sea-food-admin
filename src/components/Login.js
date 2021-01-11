@@ -5,6 +5,7 @@ import './styling/LoginStyling.css'
 import * as yup from 'yup';
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 
 
 const loginSchema = yup.object({
@@ -14,12 +15,13 @@ const loginSchema = yup.object({
 
 
 const Login = () => {
-
+    const history = useHistory();
     const logInAdmin = (user) => {
-        axios.post('http://localhost:1234/api/v1/user/checkAdmin', user).
+        axios.post('https://ocean-sea-food-api.herokuapp.com/api/v1/user/checkAdmin', user).
             then(({ data }) => {
                 if (data.isDone) {
                     toast(data.data, { type: 'success' });
+                    history.push("/panel")
                 } else {
                     toast(data.data, { type: 'error' });
                 }
