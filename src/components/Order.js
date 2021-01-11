@@ -1,12 +1,19 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import OrderDetail from "./OrderDetail";
 import { Button } from 'react-bootstrap';
+import { UserAuth } from './context/AuthContextProvider';
+import { useHistory } from 'react-router-dom';
 
 function Order() {
     const [orders, setOrders] = useState([]);
-
+    const history = useHistory();
+    const { validatedUser } = useContext(UserAuth);
     useEffect(() => {
+        console.log('validatedd', validatedUser)
+        if (!validatedUser) {
+            history.push('/login');
+        }
         axios.get('https://ocean-sea-food-api.herokuapp.com/api/v1/order/getAllOrders').then(({ data }) => {
             console.log(data.data);
             if (data.isDone) {

@@ -1,11 +1,12 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useContext } from "react";
 import { Form, Button } from "react-bootstrap";
 import './styling/LoginStyling.css'
 import * as yup from 'yup';
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
+import { UserAuth } from './context/AuthContextProvider';
 
 
 const loginSchema = yup.object({
@@ -16,11 +17,13 @@ const loginSchema = yup.object({
 
 const Login = () => {
     const history = useHistory();
+    const { validatedUser, toggleAuth } = useContext(UserAuth);
     const logInAdmin = (user) => {
         axios.post('https://ocean-sea-food-api.herokuapp.com/api/v1/user/checkAdmin', user).
             then(({ data }) => {
                 if (data.isDone) {
                     toast(data.data, { type: 'success' });
+                    toggleAuth();
                     history.push("/panel")
                 } else {
                     toast(data.data, { type: 'error' });

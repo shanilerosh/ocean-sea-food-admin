@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import Header from "./components/Header";
 import Login from "./components/Login";
@@ -12,6 +12,7 @@ import OrderFilterForm from "./components/OrderFilterForm";
 import { toast } from "react-toastify";
 import Item from "./components/Item";
 import User from "./components/User";
+import AuthContextProvider from "./components/context/AuthContextProvider";
 
 const socket = io("ws://ocean-sea-food-api.herokuapp.com/", {
   transports: ["websocket", "polling"],
@@ -26,8 +27,6 @@ socket.on("broadcast", (data) => {
 });
 
 const App = () => {
-  const [text, setText] = useState("");
-
   return (
     <div>
       <ToastContainer
@@ -41,26 +40,27 @@ const App = () => {
         draggable
         pauseOnHover
       />
-      
-      <BrowserRouter>
-        <Switch>
-          <Route path="/panel">
-            <Header />
-            <Order />
-          </Route>
-          <Route path="/item">
-            <Header />
-            <Item />
-          </Route>
-          <Route path="/user">
-            <Header />
-            <User />
-          </Route>
-          <Route path="/">
-            <Login />
-          </Route>
-        </Switch>
-      </BrowserRouter>
+      <AuthContextProvider>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/panel">
+              <Header />
+              <Order />
+            </Route>
+            <Route path="/item">
+              <Header />
+              <Item />
+            </Route>
+            <Route path="/user">
+              <Header />
+              <User />
+            </Route>
+            <Route path="/">
+              <Login />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </AuthContextProvider>
     </div>
   );
 };

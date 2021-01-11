@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ButtonGroup, Dropdown, Form, Table } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import { Formik } from 'formik';
@@ -6,6 +6,8 @@ import * as yup from 'yup';
 import axios from "axios";
 import { toast } from "react-toastify";
 import NumberFormat from "react-number-format";
+import { useHistory } from 'react-router-dom';
+import { UserAuth } from './context/AuthContextProvider';
 
 const userSchema = yup.object({
     username: yup.string().min(4).required(),
@@ -15,10 +17,14 @@ const userSchema = yup.object({
 })
 
 const User = () => {
-
+    const history = useHistory();
+    const { validatedUser } = useContext(UserAuth);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
+        if (!validatedUser) {
+            history.push('/login');
+        }
         loadUsers();
     }, []);
 
